@@ -1,0 +1,9 @@
+absl-py==1.4.0
+scikit-image
+scikit-learn
+scipy==1.10.1
+tensorflow==2.14.0
+torch==2.1.0
+torchvision==0.16.0
+wandb==0.15.12
+
