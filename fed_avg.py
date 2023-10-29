@@ -159,6 +159,7 @@ class FedAvg:
     def train(self) -> None:
         """Train a server model."""
         train_losses = []
+        global idx_clients
 
         for epoch in range(self.args.n_epochs):
             clients_models = []
@@ -166,8 +167,44 @@ class FedAvg:
 
             # Randomly select clients
             m = max(int(self.args.frac * self.args.n_clients), 1)
-            # idx_clients = np.random.choice(range(self.args.n_clients), m, replace=False)
-            idx_clients = ClientSelector(self.args.n_clients).random_selection(m)
+            if self.args.sample_type == 'random':
+                # idx_clients = np.random.choice(range(self.args.n_clients), m, replace=False)
+                selector = ClientSelector(self.args.n_clients)
+                idx_clients = selector.random_selection(m)
+            elif self.args.sample_type == 'replacement':
+                selector = ClientSelector(self.args.n_clients)
+                idx_clients = selector.random_selection_with_replacement(m)
+            elif self.args.sample_type == 'stratified':
+                labels = np.random.randint(0, 10, self.args.n_clients)
+                selector = ClientSelector(self.args.n_clients)
+                idx_clients = selector.stratified_sampling(m, labels)
+            elif self.args.sample_type == 'active-learning':
+                uncertainty_scores = np.random.rand(self.args.n_clients)
+                selector = ClientSelector(self.args.n_clients)
+                idx_clients = selector.active_learning(m, uncertainty_scores)
+            elif self.args.sample_type == 'cohort':
+                cohort_labels = np.random.choice(['A', 'B', 'C'], self.args.n_clients)
+                selector = ClientSelector(m, self.args.n_clients)
+                idx_clients = selector.cohort_selection(m, cohort_labels)
+            elif self.args.sample_type == 'rank':
+                client_features = np.random.rand(self.args.n_clients)
+                client_performance = np.random.rand(self.args.n_clients)
+                selector = ClientSelector(self.args.n_clients)
+                idx_clients = selector.learning_to_rank_selection(m, client_features, client_performance)
+            elif self.args.sample_type == 'budget':
+                budget = 100  # Budget for communication or computation
+                client_costs = np.random.randint(1, 10, self.args.n_clients)
+                selector = ClientSelector(self.args.n_clients)
+                idx_clients = selector.budget_constrained_selection(budget, client_costs)
+            elif self.args.sample_type == 'reputation':
+                reputation_scores = np.random.rand(self.args.n_clients)
+                selector = ClientSelector(self.args.n_clients)
+                idx_clients = selector.reputation_selection(m, reputation_scores)
+            elif self.args.sample_type == 'priority':
+                priority_scores = np.random.rand(self.args.n_clients)
+                selector = ClientSelector(self.args.n_clients)
+                idx_clients = selector.priority_selection(m, priority_scores)
+
             # Train clients
             self.root_model.train()
 
