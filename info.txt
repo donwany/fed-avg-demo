@@ -1,0 +1,393 @@
+# aws s3 cp s3://federated-learning-research-v1/FederatedScope.zip . --profile elbowai
+# aws s3 cp FederatedScope.zip s3://federated-learning-research-v1/FederatedScope.zip
+
+
+
+
+#------------------------- ANOTHER RESEARCH TOPIC FOR REWARD MODEL  - TRL using the various type of loss -----------------------
+https://github.com/huggingface/trl/blob/main/trl/trainer/reward_trainer.py
+
+Line 225
+
+loss = -nn.functional.logsigmoid(rewards_chosen - rewards_rejected).mean()
+loss = nn.functional.binary_cross_entropy_with_logits(rewards_chosen - rewards_rejected, torch.zeros_like(rewards_chosen))
+loss = nn.functional.mse_loss(rewards_chosen - rewards_rejected, torch.zeros_like(rewards_chosen))
+loss = nn.functional.smooth_l1_loss(rewards_chosen - rewards_rejected, torch.zeros_like(rewards_chosen))
+loss = nn.functional.smooth_l1_loss(rewards_chosen - rewards_rejected, torch.zeros_like(rewards_chosen))
+loss = torch.max(1 - (rewards_chosen - rewards_rejected), torch.zeros_like(rewards_chosen)).mean()
+loss = nn.functional.kl_div(F.log_softmax(rewards_chosen, dim=1), F.softmax(rewards_rejected, dim=1))
+
+margin = 1.0  # Adjust as needed
+loss = 0.5 * (1 - F.cosine_similarity(rewards_chosen, rewards_rejected)).mean() + 0.5 * (F.relu(margin - F.cosine_similarity(rewards_chosen, rewards_rejected))).mean()
+
+margin = 1.0  # Adjust as needed
+loss = F.triplet_margin_loss(rewards_chosen, rewards_rejected, anchor=your_anchor, margin=margin)
+
+
+alpha = 0.25  # Tunable parameter
+gamma = 2.0  # Tunable parameter
+loss = -alpha * (1 - F.softmax(rewards_chosen, dim=1)) ** gamma * F.log_softmax(rewards_chosen, dim=1)
+
+loss = torch.relu(margin - (rewards_chosen - rewards_rejected)).mean()
+
+loss = 1 - (2 * (rewards_chosen * target_mask).sum() + smooth) / (rewards_chosen.sum() + target_mask.sum() + smooth)
+
+
+
+#-----------------------------------------------------------------------------------------------------------------------------
+# Large Language Mdels with Federated Learning Methods and Optimization
+# Extensive experiments to validate the effectiveness of LLMs based PEFT algorithms in federated settings.
+# Investigation of resource-efficient techniques for fine-tuning LLMs, enabling federated learning with limited resources.
+#----------------------------------------------------------------------------------------------------------------------------
+
+# ---------------------------------------------
+# TOPIC:
+# 1. Analysis of the challenges associated with federated fine-tuning of LLMs, including communication optimization, data preprocessing, and privacy preservation.
+# 2. Detailed examination of FS-LLM, including its benchmarking pipeline and the effectiveness of parameter-efficient fine-tuning algorithms.
+# 3. Investigation of resource-efficient techniques for fine-tuning LLMs, enabling federated learning with limited resources.
+# 4. Exploration of interdisciplinary applications, such as personalized federated fine-tuning of LLMs.
+# 5. Extensive experiments to validate the effectiveness of FS-LLM and benchmark advanced LLMs in federated settings.
+# ----------------------------------------------
+
+# Why a lot of companies are not utilizing closed-source LLMs fine-tuning.
+# Due to privacy and security concerns.
+# How many companies are utilizing this service of LLM fine-tuning API?
+# Where are low patronage of fine-tuning?
+
+
+    AutoModelForCausalLM (Auto-Regressive Language Modeling):
+        This model is primarily used for auto-regressive language modeling tasks, such as text generation and completion.
+        It is suitable for tasks where the model generates text one token at a time, considering the previously generated tokens.
+        Common use cases include language modeling, text generation, and completion tasks.
+        Example architectures: GPT-2, GPT-3, and other autoregressive models.
+
+    AutoModelForSeq2SeqLM (Sequence-to-Sequence Language Modeling):
+        This model is designed for sequence-to-sequence language modeling tasks, such as machine translation, summarization, and text-to-text tasks.
+        It can handle tasks where an input sequence is transformed into an output sequence or where the model generates a sequence based on an input.
+        Common use cases include machine translation, summarization, and text generation with a source context.
+        Example architectures: BART, T5, MarianMT, and other sequence-to-sequence models.
+
+
+
+
+https://arxiv.org/pdf/2307.08925.pdf
+https://developer.nvidia.com/blog/adapting-llms-to-downstream-tasks-using-federated-learning-on-distributed-datasets/
+https://blog.fedml.ai/releasing-fedllm-build-your-own-large-language-models-on-proprietary-data-using-the-fedml-platform/
+https://github.com/FedML-AI/FedLLM?ref=blog.fedml.ai
+https://arxiv.org/pdf/2309.00363v1.pdf
+https://github.com/alibaba/federatedscope
+https://www.marktechpost.com/2023/09/14/this-paper-by-alibaba-group-introduces-federatedscope-llm-a-comprehensive-package-for-fine-tuning-llms-in-federated-learning/
+https://colab.research.google.com/github/alibaba/FederatedScope
+
+https://github.com/NVIDIA/NeMo/blob/main/tutorials/nlp/lora.ipynb
+https://github.com/asokraju/LangChainDatasetForge/blob/main/Finetuning_Falcon_7b.ipynb
+https://github.com/huggingface/peft/blob/main/examples/int8_training/Finetune_opt_bnb_peft.ipynb
+https://huggingface.co/docs/trl/main/en/example_overview
+
+https://arxiv.org/pdf/2303.13363.pdf
+https://github.com/alibaba/FederatedScope/tree/master
+https://federatedscope.io/docs/llm/
+https://github.com/alibaba/FederatedScope/tree/llm
+# PEFT
+https://github.com/huggingface/peft
+# LoHa
+https://arxiv.org/pdf/2108.06098.pdf
+# AdaLoRa
+https://arxiv.org/pdf/2303.10512.pdf
+# IA^3
+https://arxiv.org/pdf/2205.05638.pdf
+# Multi-Prompt Tuning
+https://arxiv.org/pdf/2303.02861.pdf
+
+
+# FEDPETuning
+https://github.com/SMILELab-FL/FedPETuning
+https://arxiv.org/pdf/2212.10025.pdf
+https://www.philschmid.de/fine-tune-flan-t5-peft
+
+# evaluate - judging LLMs
+https://arxiv.org/pdf/2306.05685.pdf
+
+https://github.com/KohakuBlueleaf/LyCORIS/blob/eb460098187f752a5d66406d3affade6f0a07ece/lycoris/modules/loha.py
+https://github.com/KohakuBlueleaf/LyCORIS/tree/eb460098187f752a5d66406d3affade6f0a07ece
+
+# WORKING NOTEBOOK
+https://colab.research.google.com/drive/1xdPxiAjDC2wjC6j-PsYUqVN15FPhSA3K#scrollTo=PUn1JaEyPrNf&uniqifier=2
+
+# PeftTypes: LORA, ADALORA, ADALORA, LOHA, ADAPTION_PROMPT, MULTITASK_PROMPT_TUNING, IA3
+```
+class PeftType(str, enum.Enum):
+    PROMPT_TUNING = "PROMPT_TUNING"
+    MULTITASK_PROMPT_TUNING = "MULTITASK_PROMPT_TUNING"
+    P_TUNING = "P_TUNING"
+    PREFIX_TUNING = "PREFIX_TUNING"
+    LORA = "LORA"
+    ADALORA = "ADALORA"
+    ADAPTION_PROMPT = "ADAPTION_PROMPT"
+    IA3 = "IA3"
+    LOHA = "LOHA"
+
+
+class TaskType(str, enum.Enum):
+    SEQ_CLS="SEQ_CLS"
+    SEQ_2_SEQ_LM = "SEQ_2_SEQ_LM"
+    CAUSAL_LM = "CAUSAL_LM"
+    TOKEN_CLS = "TOKEN_CLS"
+    QUESTION_ANS = "QUESTION_ANS"
+    FEATURE_EXTRACTION = "FEATURE_EXTRACTION"
+```
+eb9d9e69d86f3cf970cc9f413d5388bcec87b606
+
+# LLM Datasets
+# They used 3 evaluation datasets
+
+https://huggingface.co/datasets/gsm8k
+https://huggingface.co/datasets/databricks/databricks-dolly-15k
+https://huggingface.co/datasets/HuggingFaceH4/CodeAlpaca_20K
+
+https://raw.githubusercontent.com/databrickslabs/dolly/d000e3030970379aabbf6d291f50ffdd3b715b64/data/databricks-dolly-15k.jsonl
+https://raw.githubusercontent.com/openai/grade-school-math/3101c7d5072418e28b9008a6636bde82a006892c/grade_school_math/data/train.jsonl
+https://raw.githubusercontent.com/openai/grade-school-math/2909d34ef28520753df82a2234c357259d254aa8/grade_school_math/data/test.jsonl
+https://raw.githubusercontent.com/gururise/AlpacaDataCleaned/a7d629079a95c2e4b7ec7dfe55087fbd18d9eba8/alpaca_data_cleaned.json
+https://raw.githubusercontent.com/tatsu-lab/stanford_alpaca/761dc5bfbdeeffa89b8bff5d038781a4055f796a/alpaca_data.json
+https://raw.githubusercontent.com/sahil280114/codealpaca/d269da106a579a623a654529b3cb91b5dfa9c72f/data/rosetta_alpaca.json
+
+# ALTERNATIVE DATASETS
+https://huggingface.co/datasets/web_questions
+https://huggingface.co/datasets/b-mc2/sql-create-context
+https://huggingface.co/datasets/Open-Orca/OpenOrca
+https://huggingface.co/datasets/PolyAI/banking77
+
+# Fine-tuning whisper-large with PEFT LORA
+https://colab.research.google.com/drive/1DOkD_5OUjFa0r5Ik3SgywJLJtEo2qLxO?usp=sharing
+# Fine-tuning llama-7b with QLORA 4-bit
+https://gist.github.com/Birch-san/57878c4a27cf34f57d3e861865a7d0a2
+
+# Evaluating LLM
+https://github.com/openai/human-eval
+https://github.com/stanford-crfm/helm
+
+# Overview
+On top of FS, we develop three enrichments to address the gaps mentioned in Section 1 and facilitate
+fine-tuning LLMs in the federated setting: LLM-BENCHMARKS, LLM-ALGZOO, and LLM-
+TRAINER. With these new modules, FS-LLM supports end-to-end federated fine-tuning for LLMs,
+providing (1) data preparation for fine-tuning and evaluation, (2) several out-of-the-box popular
+fine-tuning algorithms and unified and flexible programming interfaces, (3) various accelerating
+and resource-efficient operators and flexible pluggable sub-routines for interdisciplinary study.
+
+# Low Rank
+Low-rank parameterization is a technique used in machine learning and deep learning to reduce the number of
+parameters in a model, which can lead to more efficient training and inference, and can help mitigate overfitting.
+It involves approximating the full parameter space with a lower-dimensional subspace, typically with a much smaller number of parameters.
+
+# Evaluation Metrics:
+Currently there are metrics used to evaluate Federated LLM fine-tuning, but the paper is
+using LLM-BENCHMARKS
+
+# Cost-Related Metrics:
+Measure the efficiency of the FL both computation costs (GPU) and communication costs(message size)
+
+# LLM Agorithm Zoo:
+It includes PEFT (Parameter Efficient Fine-Tuning) solves communication and computation issues where
+all clients have full access to the model. ie. uploading and downloading from client to server.
+
+Algorithm that does not require full access to the model in FL setting.
+    PEFT: LoRa, Prefix-Tuning, P-Tuning and Prompt Tuning
+    Adaptors only train additional limited parameters whiles keeping other parameters frozen.
+
+    PEFT algorithms reduce the computation cost and make local training more viable for
+    resource-limited clients. For example, if we only fine-tune the adapter of LLaMA-7B, the total GPU
+    memory consumption will be a little more than 28GB, and the computation time will be less than
+    that of full-parameter fine-tuning as well.
+
+    # Federated Fine-Tuning without accessing full model
+    Many of the existing LLMs are closed-source for many reasons like training cost, data leakage and trademark reasons.
+    However, customers might not want to depend only on APIs for inferencing, but rather want to customize them ore to
+    adapt to domain-specific data. These data are often private, limited and incomplete.
+
+    To satisfy such practical demand, we adapt a privacy-preserving fine-tuning algorithm, offsite
+    tuning to federated version and name it FedOT for short.
+
+    It sends a lossy compressed model with untrainable parameters to the clients as an emulator of the complete LLM at
+    the beginning of FL. During the FL, the clients fine-tune adapters with the frozen emulator and their
+    domain-specific data. FedOT safeguards both the intelligent property of the model providers and
+    the data privacy of the clients, while leveraging the distributed data for adapting LLMs to specific
+    domains. This algorithm can be further integrated with the PEFT algorithms.
+
+    # extending FL fine-tuning
+    When the LLM is not accessible to clients, different algorithms can be used to generate an
+    emulator, including distillation, pruning, and quantization via ① LLM model pre-processing interface;
+    if the LLM is accessible, ① just output the input by default. The other three interfaces in the figure
+    are ② initial model broadcast, ③ shared parameter aggregation, and ④ parameter re-distribution.
+
+    # Fine-Tuning LLMs without accessing the full model
+    Specifically, we use the first and last two layers of LLaMA-7B as the adapter and compress the model as the emulator by dropping
+    20% and 50% of the remaining layers uniformly. Then the server broadcasts both the adapter and
+    emulator to all clients, and the clients only fine-tune the adapter with FedAvg.
+
+    # Comparing FedOT to LocalOT
+    1. Comparing FedOT and LocalOT, FL offers significant
+    benefits for this privacy-preserving fine-tuning algorithm for federated fine-tuning LLMs without
+    accessing the full model. This demonstrates that FedOT can still enable multiple entities to benefit
+    from collaborative training without sharing their private data directly when they cannot access the full model.
+    2. When the dropping rate is 20%, FedOT still achieves competitive performance compared
+    to some of those PEFT algorithms, even though the clients cannot access the full model.
+    3. On the other hand, the results show that when the dropping rate increases to 50% from 20%, the model
+    loses a large amount of knowledge from the pre-training stage, almost fails to retain the capacity of
+    the CoT and code generation, and hardly acquire new knowledge from the fine-tuning. There is a
+    trade-off between the compression rate and the performance of LLMs: increasing the compression
+    rate enhances the privacy of LLMs but degrades their performance.
+    # This indicates that how to compress LLMs while maintaining their generalization ability and model privacy is a promising
+    # research direction to explore.
+
+    However, itshould be noted that this is because the number of parameters of the adapter in FedOT is significantly
+    larger than those in the PEFT algorithms. FedOT sacrifices communication efficiency for model
+    performance, making it effective in scenarios where clients cannot access the full model.
+
+
+
+# LLM-TRAINER
+PEFT algorithms can significantly reduce the computation cost, they may still be computationally expensive
+for some clients with limited resources.
+
+To alleviate such concerns, we provide LLM-TRAINER, which is designed to further accelerate computation and save resources during the
+local training and message transmission stages in FL.
+
+FS-LLM supports simulated mode, distributed mode, and clustered mode.
+
+For simulated mode, all clients run on a single machine to simulate the federated fine-tuning process.
+For the distributed mode and clustered mode, each client runs on one or more machines and communicates
+with the server separately.
+
+# Training Operators
+We introduce various accelerating operators and resource-efficient operators for fine-tuning LLMs
+in FS-LLM. These provided operators aim to optimize the federated fine-tuning process in terms
+of CPU/GPU memory consumption, multi-GPU parallel, and communication cost. We describe the
+operators and show how they can be combined to achieve better compatibility and efficiency.
+
+Mode-generic operators, Mode-specific operators and prallelization operators
+
+pFL and FedHPO are two advanced FL tasks that can significantly improve model performance in FL.
+
+# Experiments
+1. How effective and efficient is it to federated fine-tuning LLMs with PEFT algorithms?
+2. How effective is it to federated fine-tune LLMs without accessing the full model?
+3. What insights can we obtain from the interdisciplinary capabilities of FS-LLM in resolving pFL and FedHPO problems when federated fine-tuning LLMs?
+
+We conduct experiments in three scenarios:
+global (centralized fine-tuning), fed (federated fine-tuning), and local (separated fine-tuning).
+
+To be more specific,
+1. Global scenario can be regarded as fine-tuning LLMs with one client who holds the whole fine-tuning dataset.
+2. Fed scenario means that clients federated fine-tune LLMs where each client holds a different fine-tuning dataset.
+3. Local scenario means that each client independently fine-tunes LLMs with its own fine-tuning dataset.
+
+# Device: Nvidia A100 GPU (80GB) with Intel Xeon Platinum 8369B CPU and 512GB of RAM.
+
+For all scenarios, we repeat the experiments three times with different random seeds. We report the average evaluation
+score with its standard deviation.
+
+# Benchmark federated fine-tuned LLaMA-7B.
+We use a widely adopted LLM, LLaMA-7B, with three PEFT algorithms: LoRa, P-tuning, Prompt Tuning excluding Prefix-Tuning.
+
+They employed FedAVG for aggregation strategy.
+
+# Hyperparameters for experiments:
+Communication rounds set to 500, local step to 30, batch size to 1.
+Performed Grid search with a space of learning rate of # {1×10−4, 3×10−4, 5×10−4, 1×10−3, 3×10−3, 5×10−3}
+Half precision operator also used during fine-tuning.
+
+# Conclusion:
+This indicates that LoRA is a suitable PEFT algorithm for federate fine-tuning LLMs in future research or realistic scenarios.
+
+We observe that the current-generation LLM with a larger scale has an obvious advantage over the previous-generation
+language model with a smaller scale on various evaluation tasks.
+
+# Efficiency of PEFT Algorithms
+we evaluate the efficiency of various PEFT algorithms in FL. Among all the metrics, we focus on their GPU memory
+consumption, message size, and computation time in the federated fine-tuning process.[SEE PAGE 12]
+
+# (1) fine-tuning with different PEFT algorithms has negligible impact on the GPU memory consumption.
+# (2) However, there are large differences in the message sizes, which in turn lead to large variations in the transmission time.
+
+
+# Evaluation Task: Used 3 different methods for benchmarking fine-tuned LLMs
+    - Evaluation task for code generation capability: HumanEval is to measure whether the code generated by LLMs
+    is correct or not. It contains evaluation dataset and metric Pass@K score for assessng the performance of LLMs on
+    code generation capability.
+    m - model generates m samples per task, c as the number of correct samples generated by LLM, then
+    PASS@K = [1-(m-c combination k)/(m combination k] [SEE PAGE 23]
+    - Evaluation task for generic language capability
+    - Evaluation task for CoT capability
+
+
+# RESEARCH DIRECTION
+    there are two research directions for federated fine-tuning LLMs in efficiency:
+    (1) how to leverage the idle time of computation-resource-rich clients while they wait for
+    computation-resource limited clients to complete local updates, and
+    (2) how to optimize the utilization of the available bandwidth resources in computation-resource-limited clients during computation
+
+    we uncover two major challenges for fine-tuning LLMs in FedHPO: (1) the evaluation
+    scores are highly sensitive and non-smooth to the hyperparameter changes, and (2) the validation
+    loss may not be a reliable indicator of the generalization performance. These challenges identify
+    two promising yet unexplored research directions for future work on fine-tuning LLMs in FedHPO.
+    The first direction is to develop fine-grained but efficient FedHPO methods for finding the optimal
+    hyperparameters on federated fine-tuning LLMs, which can avoid exhaustive searches over the
+    hyperparameter space. The second direction is to exploit concurrent exploration in FedHPO to
+    evaluate the generalization ability of the client-side hyperparameters with low fidelity for each client
+    during the FL process.
+
+    the results of this paper are limited by several factors. (1) Due to the resource limit, all
+    experiments use a batch size of 1, but federated fine-tuning LLMs with larger batch sizes might
+    perform better. (2) We also find that designing different prompts (either in fine-tuning or evaluation)
+    will impact the evaluation results. To ensure a fair evaluation and comparison, we use a fixed prompt,
+    but more explorations are possible.
+
+    Based on our observations and experiments, we outline some promising directions for future research
+    in federated fine-tuning LLMs as follows.
+    • Designing computation-efficient fine-tuning algorithms for federated fine-tuning LLMs. Even
+    with PEFT algorithms, the computation cost is still too high for most resource-limited clients.
+    Reducing the computation cost can lower the barrier for more data holders and allow more entities
+    to benefit from the federated fine-tuning LLMs.
+    • Exploring more privacy-preserving fine-tuning algorithms without accessing the full model in
+    FL. FedOT suffers from a trade-off between model compression rate and model performance.
+    Addressing this issue would protect the sensitive information of LLMs in FL from exposing
+    pre-training data and the valuable full model, which could be exploited by malicious entities for
+    adversarial attacks or commercial gains while maintaining model performance in FL.
+    • Optimizing pFL algorithms to enable robust combination with various accelerating and resource-
+    efficient operators. If performance degradation due to low-precision training can be overcome, it
+    would improve the personalized model performance when data are heterogeneous and computation
+    resources are limited among clients.
+    • Investigating low-fidelity FedHPO methods for fine-tuning LLMs in FL. Based on our experimen-
+    tal results, we find the inconsistency between validation loss and the generalization performance
+    of LLMs. Overcoming this inconsistency would help find optimal hyperparameters for federated
+    fine-tuning LLMs with low cost, resulting in better generalization performance.
+    • Extending the federated LLM fine-tuning to cross-device setting. As we have already observed the
+    demand for federated fine-tuning LLMs in the cross-silo scenario, we also notice a similar need in
+    the cross-device scenario (Lai et al., 2022; Chen et al., 2023; Gao et al., 2023). In the cross-device
+    scenario, the clients are more numerous and heterogeneous, the computational resources are more
+    limited, and the network conditions are more diverse. How to federated fine-tune LLMs under the
+    cross-device scenario is an urgent problem that needs to be solved.
+
+
+
+
+#-------------------------------- RESULTS NOT MATCHING ----------------------
+# Communication-Efficient Learning of Deep Networks from Decentralized Data
+http://proceedings.mlr.press/v54/mcmahan17a/mcmahan17a.pdf
+https://github.com/donwany/fed-avg-demo/tree/main
+
+#https://arxiv.org/pdf/1907.02189v4.pdf
+#https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=9817607&tag=1
+
+# ON THE CONVERGENCE OF FEDAVG ON NON-IID DATA
+https://arxiv.org/pdf/1907.02189v4.pdf
+https://github.com/lx10077/fedavgpy
+
+#------------------------------ TESTING RESULTS ------------------------------
+# Fast Federated Learning in the Presence of Arbitrary Device Unavailability
+https://github.com/hmgxr128/MIFA_code/tree/main
+https://arxiv.org/pdf/2106.04159.pdf
+
+
+#--------------------------------

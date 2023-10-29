@@ -41,7 +41,15 @@ conda env create -f environment.yml
 ### Training Example
 
 ```
-python fed_avg.py --batch_size=10 --frac=0.1 --lr=0.01 --n_client_epochs=20 --n_clients=100 --n_epochs=1000 --n_shards=200 --non_iid=1
+python fed_avg.py \
+--batch_size=10 \
+--frac=0.1 \
+--lr=0.01 \
+--n_client_epochs=20 \
+--n_clients=100 \
+--n_epochs=1000 \
+--n_shards=200 \
+--non_iid=1
 ```
 
 To perform a sweep over hyperparameters using WandB:
@@ -49,4 +57,8 @@ To perform a sweep over hyperparameters using WandB:
 ```
 wandb sweep sweep.yaml
 wandb agent <sweep_id>
+```
+
+```shell
+# 9b5ce86c7c7d4e92dea493f54d181b97d058e0dc
 ```

@@ -35,7 +35,12 @@ def arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--data_root", type=str, default="../datasets/")
     parser.add_argument("--model_name", type=str, default="cnn")
 
-    parser.add_argument("--non_iid", type=int, default=1)  # 0: IID, 1: Non-IID
+    parser.add_argument("--non_iid", type=int, choices=[0,1], default=1, help='# 0: IID, 1: Non-IID')
+    parser.add_argument("--sample_type",
+                        type=str,
+                        choices=['federated', 'uniform', 'group', 'responsive'],
+                        default='federated',
+                        help='Client Sampling Strategy')
     parser.add_argument("--n_clients", type=int, default=100)
     parser.add_argument("--n_shards", type=int, default=200)
     parser.add_argument("--frac", type=float, default=0.1)

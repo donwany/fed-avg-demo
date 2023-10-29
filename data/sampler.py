@@ -13,7 +13,6 @@ class FederatedSampler(Sampler):
         n_shards: Optional[int] = 200,
     ):
         """Sampler for federated learning in both iid and non-iid settings.
-
         Args:
             dataset (Sequence): Dataset to sample from.
             non_iid (int): 0: IID, 1: Non-IID

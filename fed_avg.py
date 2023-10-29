@@ -12,6 +12,7 @@ from models.models import CNN, MLP
 from utils import arg_parser, average_weights, Logger
 from data.mnist import MNISTDataset
 from data.sampler import FederatedSampler
+from core.sampler_builder import get_sampler
 
 class FedAvg:
     """Implementation of FedAvg
@@ -30,6 +31,7 @@ class FedAvg:
             n_clients=self.args.n_clients,
             n_shards=self.args.n_shards,
             non_iid=self.args.non_iid,
+            sample_type=self.args.sample_type
         )
 
         if self.args.model_name == "mlp":
@@ -45,8 +47,12 @@ class FedAvg:
 
         self.reached_target_at = None  # type: int
 
-    def _get_data(
-        self, root: str, n_clients: int, n_shards: int, non_iid: int
+    def _get_data(self,
+            root: str,
+            n_clients: int,
+            n_shards: int,
+            non_iid: int,
+            sample_type: str
     ) -> Tuple[DataLoader, DataLoader]:
         """
         Args:
@@ -54,18 +60,49 @@ class FedAvg:
             n_clients (int): number of clients.
             n_shards (int): number of shards.
             non_iid (int): 0: IID, 1: Non-IID
+            sample_type (int): federated, uniform, group, responsive
 
         Returns:
             Tuple[DataLoader, DataLoader]: train_loader, test_loader
         """
+        global sampler, train_loader
+
         train_set = MNISTDataset(root=root, train=True)
         test_set = MNISTDataset(root=root, train=False)
 
-        sampler = FederatedSampler(
-            train_set, non_iid=non_iid, n_clients=n_clients, n_shards=n_shards
-        )
+        if sample_type == 'federated':
+            sampler = FederatedSampler(
+                train_set,
+                non_iid=non_iid,
+                n_clients=n_clients,
+                n_shards=n_shards
+            )
+            train_loader = DataLoader(train_set, batch_size=128, sampler=sampler)
+        elif sample_type == 'uniform':
+            sampler = get_sampler(
+                sample_strategy=sample_type,
+                client_num=n_clients,
+            )
+            train_loader = DataLoader(train_set,
+                                      batch_size=128,
+                                      sampler=sampler.sample(size=n_clients))
+        elif sample_type == 'group':
+            sampler = get_sampler(
+                sample_strategy=sample_type,
+                client_num=n_clients,
+            )
+            train_loader = DataLoader(train_set,
+                                      batch_size=128,
+                                      sampler=sampler.sample(size=n_clients, shuffle=True))
+        elif sample_type == 'responsiveness':
+            sampler = get_sampler(
+                sample_strategy=sample_type,
+                client_num=n_clients,
+            )
+            train_loader = DataLoader(train_set, batch_size=128, sampler=sampler.sample(size=n_clients))
 
-        train_loader = DataLoader(train_set, batch_size=128, sampler=sampler)
+
+        # train_loader = DataLoader(train_set, batch_size=128, sampler=sampler)
         test_loader = DataLoader(test_set, batch_size=128)
 
         return train_loader, test_loader
