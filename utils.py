@@ -38,7 +38,7 @@ def arg_parser() -> argparse.ArgumentParser:
     parser.add_argument("--non_iid", type=int, choices=[0,1], default=1, help='# 0: IID, 1: Non-IID')
     parser.add_argument("--sample_type",
                         type=str,
-                        choices=['federated', 'uniform', 'group', 'responsive'],
+                        choices=['federated', 'uniform', 'group', 'responsiveness'],
                         default='federated',
                         help='Client Sampling Strategy')
     parser.add_argument("--n_clients", type=int, default=100)

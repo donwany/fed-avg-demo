@@ -45,12 +45,9 @@ def get_sampler(sample_strategy='uniform',
     if sample_strategy == 'uniform':
         return UniformSampler(client_num=client_num)
     elif sample_strategy == 'responsiveness':
-        return ResponsivenessRealtedSampler(client_num=client_num,
-                                            client_info=client_info)
+        return ResponsivenessRealtedSampler(client_num=client_num, client_info=client_info)
     elif sample_strategy == 'group':
-        return GroupSampler(client_num=client_num,
-                            client_info=client_info,
-                            bins=bins)
+        return GroupSampler(client_num=client_num, client_info=client_info, bins=bins)
     else:
         raise ValueError(
             f"The sample strategy {sample_strategy} has not been provided.")

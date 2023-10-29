@@ -13,6 +13,7 @@ from utils import arg_parser, average_weights, Logger
 from data.mnist import MNISTDataset
 from data.sampler import FederatedSampler
 from core.sampler_builder import get_sampler
+from core.client_selection import ClientSelector
 
 class FedAvg:
     """Implementation of FedAvg
@@ -165,8 +166,8 @@ class FedAvg:
 
             # Randomly select clients
             m = max(int(self.args.frac * self.args.n_clients), 1)
-            idx_clients = np.random.choice(range(self.args.n_clients), m, replace=False)
-
+            # idx_clients = np.random.choice(range(self.args.n_clients), m, replace=False)
+            idx_clients = ClientSelector(self.args.n_clients).random_selection(m)
             # Train clients
             self.root_model.train()
 
