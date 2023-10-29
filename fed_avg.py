@@ -71,39 +71,47 @@ class FedAvg:
         train_set = MNISTDataset(root=root, train=True)
         test_set = MNISTDataset(root=root, train=False)
 
-        if sample_type == 'federated':
-            sampler = FederatedSampler(
+        sampler = FederatedSampler(
                 train_set,
                 non_iid=non_iid,
                 n_clients=n_clients,
                 n_shards=n_shards
-            )
-            train_loader = DataLoader(train_set, batch_size=128, sampler=sampler)
-        elif sample_type == 'uniform':
-            sampler = get_sampler(
-                sample_strategy=sample_type,
-                client_num=n_clients,
-            )
-            train_loader = DataLoader(train_set,
-                                      batch_size=128,
-                                      sampler=sampler.sample(size=n_clients))
-        elif sample_type == 'group':
-            sampler = get_sampler(
-                sample_strategy=sample_type,
-                client_num=n_clients,
-            )
-            train_loader = DataLoader(train_set,
-                                      batch_size=128,
-                                      sampler=sampler.sample(size=n_clients, shuffle=True))
-        elif sample_type == 'responsiveness':
-            sampler = get_sampler(
-                sample_strategy=sample_type,
-                client_num=n_clients,
-            )
-            train_loader = DataLoader(train_set, batch_size=128, sampler=sampler.sample(size=n_clients))
+        )
+
+        # if sample_type == 'federated':
+        #     sampler = FederatedSampler(
+        #         train_set,
+        #         non_iid=non_iid,
+        #         n_clients=n_clients,
+        #         n_shards=n_shards
+        #     )
+        #     train_loader = DataLoader(train_set, batch_size=128, sampler=sampler)
+        # elif sample_type == 'uniform':
+        #     sampler = get_sampler(
+        #         sample_strategy=sample_type,
+        #         client_num=n_clients,
+        #     )
+        #     train_loader = DataLoader(train_set,
+        #                               batch_size=128,
+        #                               sampler=sampler.sample(size=n_clients))
+        # elif sample_type == 'group':
+        #     sampler = get_sampler(
+        #         sample_strategy=sample_type,
+        #         client_num=n_clients,
+        #     )
+        #     train_loader = DataLoader(train_set,
+        #                               batch_size=128,
+        #                               sampler=sampler.sample(size=n_clients, shuffle=True))
+        # elif sample_type == 'responsiveness':
+        #     sampler = get_sampler(
+        #         sample_strategy=sample_type,
+        #         client_num=n_clients,
+        #     )
+        #     train_loader = DataLoader(train_set, batch_size=128, sampler=sampler.sample(size=n_clients))
 
 
         # train_loader = DataLoader(train_set, batch_size=128, sampler=sampler)
+        train_loader = DataLoader(train_set, batch_size=128, sampler=sampler)
         test_loader = DataLoader(test_set, batch_size=128)
 
         return train_loader, test_loader
@@ -184,7 +192,7 @@ class FedAvg:
                 idx_clients = selector.active_learning(m, uncertainty_scores)
             elif self.args.sample_type == 'cohort':
                 cohort_labels = np.random.choice(['A', 'B', 'C'], self.args.n_clients)
-                selector = ClientSelector(m, self.args.n_clients)
+                selector = ClientSelector(self.args.n_clients)
                 idx_clients = selector.cohort_selection(m, cohort_labels)
             elif self.args.sample_type == 'rank':
                 client_features = np.random.rand(self.args.n_clients)
