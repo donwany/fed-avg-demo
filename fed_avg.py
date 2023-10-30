@@ -183,7 +183,7 @@ class FedAvg:
                 selector = ClientSelector(self.args.n_clients)
                 idx_clients = selector.random_selection_with_replacement(m)
             elif self.args.sample_type == 'stratified':
-                labels = np.random.randint(0, 10, self.args.n_clients)
+                labels = np.random.randint(1, 10, self.args.n_clients)
                 selector = ClientSelector(self.args.n_clients)
                 idx_clients = selector.stratified_sampling(m, labels)
             elif self.args.sample_type == 'active-learning':
@@ -191,7 +191,8 @@ class FedAvg:
                 selector = ClientSelector(self.args.n_clients)
                 idx_clients = selector.active_learning(m, uncertainty_scores)
             elif self.args.sample_type == 'cohort':
-                cohort_labels = np.random.choice(['A', 'B', 'C'], self.args.n_clients)
+                cohort_labels = np.random.choice(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
+                                                 self.args.n_clients)
                 selector = ClientSelector(self.args.n_clients)
                 idx_clients = selector.cohort_selection(m, cohort_labels)
             elif self.args.sample_type == 'rank':
@@ -212,6 +213,16 @@ class FedAvg:
                 priority_scores = np.random.rand(self.args.n_clients)
                 selector = ClientSelector(self.args.n_clients)
                 idx_clients = selector.priority_selection(m, priority_scores)
+            elif self.args.sample_type == 'weighted':
+                # Generate random client weights (for example, based on data size or data quality)
+                client_weights = np.random.uniform(0.1, 1.0, self.args.n_clients)
+                selector = ClientSelector(self.args.n_clients)
+                idx_clients = selector.weighted_sampling(m, client_weights)
+            elif self.args.sample_type == 'bias-correction':
+                # Generate random client data sizes (e.g., based on the number of data samples each client has)
+                client_data_sizes = np.random.randint(100, 1000, self.args.n_clients)
+                selector = ClientSelector(self.args.n_clients, client_data_sizes)
+                idx_clients = selector.bias_correction_selection(m, client_data_sizes)
 
             # Train clients
             self.root_model.train()

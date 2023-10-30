@@ -29,6 +29,7 @@ class ClientSelector:
         return selected_clients
 
     def cohort_selection(self, m, cohort_labels):
+        """group sampling"""
         unique_cohorts = np.unique(cohort_labels)
         selected_clients = []
         for _ in range(m):
@@ -88,6 +89,35 @@ class ClientSelector:
         return selected_clients
 
     def priority_selection(self, m, priority_scores):
+        """
+        responsiveness_sampling
+        # Select clients based on responsiveness scores (higher responsiveness is better)
+        """
         # Select clients with the highest priority scores
         selected_clients = np.argsort(priority_scores)[-m:]
+        return selected_clients
+
+    def weighted_sampling(self, m, client_weights):
+        # Select clients based on assigned weights
+        if len(client_weights) != self.num_clients:
+            raise ValueError("Number of client weights must match the number of clients.")
+
+        # Normalize weights to create a probability distribution
+        normalized_weights = client_weights / sum(client_weights)
+
+        # Sample clients based on the probability distribution
+        selected_clients = np.random.choice(range(self.num_clients), m, replace=False, p=normalized_weights)
+
+        return selected_clients
+
+    def bias_correction_selection(self, m, client_data_sizes):
+        # Correct for bias using Probability Proportional to Size (PPS) sampling
+        if len(client_data_sizes) != self.num_clients:
+            raise ValueError("Number of client data sizes must match the number of clients.")
+
+        total_data_size = sum(client_data_sizes)
+        probabilities = [data_size / total_data_size for data_size in client_data_sizes]
+
+        selected_clients = np.random.choice(range(self.num_clients), m, replace=False, p=probabilities)
+
         return selected_clients
